@@ -8,26 +8,51 @@ import PyTango
 import ui_control
 import setting
 import json
-from threading import Thread
+import time
+from threading import Thread, Timer
 
 server_name = setting.server_name
 json_get = setting.json_get
+MDEBUG = setting.MDEBUG
+timer_sec = setting.timer_sec * 1000
 
 class Main_Control(ui_control.Ui_MainWindow):
     def __init__(self):
-        # self.getInfoFromServerInJson()
-        ht = Thread(target=self.getInfoFromServerInJson)
-        ht.start()
-        print("start")
+        # super(Main_Control, self).__init__()
+        # self.timer = Timer(1,self.getInfoFromServerInJson)
+        # self.timer.start()
+        self.timer = QtCore.QTimer()
+        self.timer.setInterval(timer_sec)
+
+        self.setSignalHandler()
+        self.timer.start()
+        # ht = Thread(target=self.getInfoFromServerInJson)
+        # ht.start()
+
+
+    def setSignalHandler(self):
+        print("signalhand")
+        QtCore.QTimer.connect(self.timer,QtCore.SIGNAL("timeout()"),self.getInfoFromServerInJson)
+
 
     def getInfoFromServerInJson(self):
         try:
             dev = PyTango.DeviceProxy(server_name)
             json_from_serv = dev.command_inout(json_get)
-            print json_from_serv
+            parsed_json = json.loads(json_from_serv)
+            self.setLedColorStatus(parsed_json)
+            if MDEBUG:
+                print parsed_json['readStatus']
         except PyTango.DevFailed as exc:
             print(exc)
+        except KeyError:
+            print("key error in parsed_json")
 
+    def setLedColorStatus(self, parsed):
+        if (parsed['readStatus'] == 1):
+            self.connectStatus_Led.setLedColor("green")
+        else:
+            self.connectStatus_Led.setLedColor("red")
 
 if __name__ == "__main__":
     import sys

@@ -23,11 +23,13 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+# class Ui_MainWindow(QtGui.QMainWindow):
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.setFixedSize(1020, 616)
+        # MainWindow.setFixedSize(1020, 616)
+        MainWindow.setFixedSize(1120, 616)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -60,6 +62,14 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
         self.output_textBrowser = QtGui.QTextBrowser(self.frame_2)
         # self.output_textBrowser.setFixedWidth(263)
+        self.hoLay = QtGui.QHBoxLayout()
+        spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.hoLay.addItem(spacerItem7)
+        self.connectStatus_Led = TaurusLed(self.frame_2)
+        self.connectStatus_Led.setLedColor("red")
+        self.connectStatus_Led.setFixedSize(35,35)
+        self.hoLay.addWidget(self.connectStatus_Led)
+        self.verticalLayout_4.addLayout(self.hoLay)
         self.output_textBrowser.setObjectName(_fromUtf8("output_textBrowser"))
         self.verticalLayout_4.addWidget(self.output_textBrowser)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
