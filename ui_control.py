@@ -163,7 +163,7 @@ class Ui_MainWindow(object):
         self.protect_Vacuum = QtGui.QLabel(self.frame_Protect)
         self.protect_Vacuum.setObjectName(_fromUtf8("protect_Vacuum"))
         self.gridLayout_3.addWidget(self.protect_Vacuum, 2, 3, 1, 1)
-        self.setStatusColor(self.protect_Vacuum_Led,self.protect_Vacuum,"red")
+        self.setStatusColor(self.protect_Vacuum_Led,self.protect_Vacuum,"white")
 
         self.gridLayout_3.setColumnStretch(1, 2)
         self.gridLayout_3.setColumnStretch(3, 2)
