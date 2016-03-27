@@ -30,6 +30,9 @@ class Main_Control2(ui_control.Ui_MainWindow):
         self.output_textBrowser.append("")
         self.heat_pushButton.text()[0]
         self.frame_HighVoltage_Main
+        self.Volt_Get_lcdNumber.display()
+        self.system_lcdNumber.display()
+        self.cur_Get_lcdNumber.display()
 
 class Main_Control(object):
     def __init__(self,uic):
@@ -104,7 +107,6 @@ class Main_Control(object):
 
 
     def setSignalHandler(self):
-        print("signalhand")
         QtCore.QTimer.connect(self.timer,QtCore.SIGNAL("timeout()"),self.getInfoFromServerInJson)
         self.uic.ventil_pushButton.clicked.connect(self.ventil_On)
         self.uic.heat_pushButton.clicked.connect(self.heat_On)
@@ -141,11 +143,13 @@ class Main_Control(object):
             json_from_serv = self.dev.command_inout(json_get)
             self.parsed_json = json.loads(json_from_serv)
             self.setLedColorStatus(self.parsed_json)
+            self.set_LcdNumbers_Value()
             if MDEBUG:
                 print self.parsed_json['readStatus']
         except PyTango.DevFailed as exc:
             self.setDisablePanels()
             self.setLedColorStatus(self.parsed_json)
+            self.set_LcdNumbers_Value()
             if MDEBUG:
                 print("exc in getInfoFromServerInJson")
         except KeyError:
@@ -157,6 +161,24 @@ class Main_Control(object):
         # отключение панелей, если не все флаги состояния защиты активны
         self.uic.frame_System_Main.setEnabled(False)
         self.uic.frame_HighVoltage_Main.setEnabled(False)
+
+    def set_LcdNumbers_Value(self):
+        # val = self.parsed_json['argout'][0]['M24']
+        # # if ((self.protect_Status & self.system_Status) != 1 and val != 1):
+        # if ((self.protect_Status & self.system_Status) != 1):
+        #     self.uic.system_lcdNumber.display(0)
+        # elif val != 1:
+        #     self.uic.system_lcdNumber.display(0)
+        # else:
+        # Напряжение накала лампы выходного каскада ГВЧ ???
+        val = self.parsed_json['argout'][0]['D46']
+        self.uic.system_lcdNumber.display(val)
+        # напряжение на емкостях длинной линии модулятора RFQ
+        val = self.parsed_json['argout'][0]['D98']
+        self.uic.Volt_Get_lcdNumber.display(val)
+        # ток заряда емкостей длинной линии модулятора RFQ
+        val = self.parsed_json['argout'][0]['D9']
+        self.uic.cur_Get_lcdNumber.display(val)
 
     def setLedColorStatus(self, parsed):
         # установка цветового статуса на лампы состяния элементов защиты
@@ -183,7 +205,7 @@ class Main_Control(object):
             if MDEBUG & phk:
                 print(str(key) + " ---> " + str(parsed['argout'][0][key]))
             if isConnected:
-                if key[0] == 'X':
+                if key[0] == 'X' or key == 'M24':
                     # Проверка состояния элементов защиты, если все флаги 1, то 1
                     # если хотя-бы один 0,то 0
                     self.protect_Status = self.protect_Status & parsed['argout'][0][key]
