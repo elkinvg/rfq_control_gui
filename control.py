@@ -157,6 +157,7 @@ class Main_Control(object):
             if MDEBUG:
                 print("exc in getInfoFromServerInJson")
         except KeyError:
+            # self.dev.command_inout("Init")
             if MDEBUG:
                 print("key error in parsed_json")
             print("key error in parsed_json")
@@ -167,13 +168,6 @@ class Main_Control(object):
         self.uic.frame_HighVoltage_Main.setEnabled(False)
 
     def set_LcdNumbers_Value(self):
-        # val = self.parsed_json['argout'][0]['M24']
-        # # if ((self.protect_Status & self.system_Status) != 1 and val != 1):
-        # if ((self.protect_Status & self.system_Status) != 1):
-        #     self.uic.system_lcdNumber.display(0)
-        # elif val != 1:
-        #     self.uic.system_lcdNumber.display(0)
-        # else:
         # Напряжение накала лампы выходного каскада ГВЧ ???
         val = self.parsed_json['readStatus']
         if val == 1:
@@ -194,6 +188,7 @@ class Main_Control(object):
         # установка цветового статуса на лампы состяния элементов защиты
         isConnected = False
         phk = parsed.has_key('readStatus')
+        pag = parsed.has_key('argout')
         if(phk):
             if (parsed['readStatus'] == 1):
                 self.uic.connectStatus_Led.setLedColor("green")
@@ -215,7 +210,7 @@ class Main_Control(object):
             self.system_Status = False
 
         for key in self.leds:
-            if MDEBUG & phk:
+            if MDEBUG & phk & pag:
                 print(str(key) + " ---> " + str(parsed['argout'][0][key]))
             if isConnected:
                 if key[0] == 'X' or key == 'M24':
@@ -235,7 +230,7 @@ class Main_Control(object):
             print("Protect_status: " + str(self.protect_Status))
             # self.send_to_textBrowser(QtCore.QString("Protect_status: " + str(self.protect_Status)))
         # Включение выключение системной панели и панели установки напряжения модулятора
-        self.system_Status = self.system_Status & self.protect_Status;
+        self.system_Status = self.system_Status & self.protect_Status
         self.uic.frame_System_Main.setEnabled(self.protect_Status)
         self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
 
