@@ -33,6 +33,9 @@ class Main_Control2(ui_control.Ui_MainWindow):
         self.Volt_Get_lcdNumber.display()
         self.system_lcdNumber.display()
         self.cur_Get_lcdNumber.display()
+        self.cur_Set_lineEdit.text()
+        self.cur_Set_lineEdit.setValidator()
+        self.Volt_Set_lineEdit
 
 class Main_Control(object):
     def __init__(self,uic):
@@ -54,6 +57,10 @@ class Main_Control(object):
 
         self.uic = uic
 
+        # установка валидатора
+        vd = QtGui.QIntValidator()
+        self.uic.cur_Set_lineEdit.setValidator(vd)
+        self.uic.Volt_Set_lineEdit.setValidator(vd)
         # парсинг строки статусов и значений регистров и флагов
         self.parsed_json = {}
 
@@ -72,21 +79,6 @@ class Main_Control(object):
 
         self.setSignalHandler()
         self.timer.start()
-
-        #
-        # #dict['X1'] = self.protect_Door_Led
-        # # self.connectStatus_Led.setLedColor("white")
-        # # print(super.protect_Door_Led)
-        #
-        # print dict
-        # # ht = Thread(target=self.getInfoFromServerInJson)
-        # # ht.start()
-
-        # MainWindow = QtGui.QMainWindow()
-        # ui = ui_control.Ui_MainWindow()
-        # # ui = Main_Control()
-        # ui.setupUi(MainWindow)
-        # MainWindow.show()
 
     def initDictOfLedsAndButton(self):
         self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
@@ -111,6 +103,7 @@ class Main_Control(object):
         self.uic.ventil_pushButton.clicked.connect(self.ventil_On)
         self.uic.heat_pushButton.clicked.connect(self.heat_On)
         self.uic.bhm_Rfq_pushButton.clicked.connect(self.bhm_Rfq_On)
+        self.uic.cur_Volt_pushButton.clicked.connect(self.test)
 
     def ventil_On(self):
         if self.parsed_json['argout'][0]['M3'] == 0:
@@ -134,7 +127,17 @@ class Main_Control(object):
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def test(self):
-        print("TEST")
+        val = self.uic.cur_Set_lineEdit.text()
+        print("TEST:" + str(val))
+        inn = ["D68",str(val)]
+        aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+        print(aa)
+        val = self.uic.Volt_Set_lineEdit.text()
+        inn = ["D66",str(val)]
+        print("TEST2:" + str(val))
+        aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+        print(aa)
+
 
     def getInfoFromServerInJson(self):
         try:
@@ -148,6 +151,7 @@ class Main_Control(object):
                 print self.parsed_json['readStatus']
         except PyTango.DevFailed as exc:
             self.setDisablePanels()
+            self.parsed_json['readStatus'] = 0
             self.setLedColorStatus(self.parsed_json)
             self.set_LcdNumbers_Value()
             if MDEBUG:
@@ -171,14 +175,20 @@ class Main_Control(object):
         #     self.uic.system_lcdNumber.display(0)
         # else:
         # Напряжение накала лампы выходного каскада ГВЧ ???
-        val = self.parsed_json['argout'][0]['D46']
-        self.uic.system_lcdNumber.display(val)
-        # напряжение на емкостях длинной линии модулятора RFQ
-        val = self.parsed_json['argout'][0]['D98']
-        self.uic.Volt_Get_lcdNumber.display(val)
-        # ток заряда емкостей длинной линии модулятора RFQ
-        val = self.parsed_json['argout'][0]['D9']
-        self.uic.cur_Get_lcdNumber.display(val)
+        val = self.parsed_json['readStatus']
+        if val == 1:
+            val = self.parsed_json['argout'][0]['D46']
+            self.uic.system_lcdNumber.display(val)
+            # напряжение на емкостях длинной линии модулятора RFQ
+            val = self.parsed_json['argout'][0]['D98']
+            self.uic.Volt_Get_lcdNumber.display(val)
+            # ток заряда емкостей длинной линии модулятора RFQ
+            val = self.parsed_json['argout'][0]['D9']
+            self.uic.cur_Get_lcdNumber.display(val)
+        else:
+            self.uic.system_lcdNumber.display(0)
+            self.uic.Volt_Get_lcdNumber.display(0)
+            self.uic.cur_Get_lcdNumber.display(0)
 
     def setLedColorStatus(self, parsed):
         # установка цветового статуса на лампы состяния элементов защиты
@@ -197,9 +207,12 @@ class Main_Control(object):
             isConnected = False
             self.uic.connectStatus_Led.setLedColor("red")
 
-
-        self.protect_Status = True
-        self.system_Status = True
+        if isConnected == True:
+            self.protect_Status = True
+            self.system_Status = True
+        else:
+            self.protect_Status = False
+            self.system_Status = False
 
         for key in self.leds:
             if MDEBUG & phk:
