@@ -121,21 +121,23 @@ class Main_Control(object):
         self.uic.cur_Volt_pushButton.clicked.connect(self.test)
 
     def ventil_On(self):
+        if self.rfq_block != 0:
+            self.message_err(QtCore.QString.fromUtf8("Накал и ВНМ RFQ должны быть выключены"))
+            return
         if self.parsed_json['argout'][0][self.dictBut['ventil_pb']] == 0:
             inn = [self.dictBut['ventil_pb'],"1"]
-            # self.ventil_status = 1
         else:
             inn = [self.dictBut['ventil_pb'],"0"]
-            # self.ventil_status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def heat_On(self):
+        if self.system_Status == 1:
+            self.message_err(QtCore.QString.fromUtf8("ВНМ RFQ должны быть выключены"))
+            return
         if self.parsed_json['argout'][0][self.dictBut['heat_pb']] == 0:
             inn = [self.dictBut['heat_pb'],"1"]
-            # self.heat_status = 1
         else:
             inn = [self.dictBut['heat_pb'],"0"]
-            # self.heat_status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def bhm_Rfq_On(self):
@@ -193,6 +195,7 @@ class Main_Control(object):
         val = self.parsed_json['readStatus']
         if val == 1:
             val = self.parsed_json['argout'][0]['D46']
+            val = val/10.
             self.uic.system_lcdNumber.display(val)
             # напряжение на емкостях длинной линии модулятора RFQ
             val = self.parsed_json['argout'][0]['D98']
@@ -267,6 +270,10 @@ class Main_Control(object):
             else:
                 return False
         return block
+
+    def message_err(self,str):
+        error = QtGui.QMessageBox(QtGui.QMessageBox.Critical,"Error",str,buttons = QtGui.QMessageBox.Ok)
+        error.exec_()
 
     def exceptionDialog(self, exc):
         lenExc = len(tuple(exc))
