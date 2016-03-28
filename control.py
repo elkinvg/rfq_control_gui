@@ -50,10 +50,16 @@ class Main_Control(object):
             self.exceptionDialog(exc)
             return
 
-        # установка в True, когда все элементы защиты включены (лампочки зеленые)
+        # включает отклюает панель защиты. Если истина, панель блокируется.
         self.protect_Status = False
         # установка в True, когда все элементы системы включены (лампочки зеленые)
         self.system_Status = False
+        # блокировка кнопки вентилятора
+        self.ventil_block = False
+        # статус включения накала (влияет на блокировку кнопки ВНМ)
+        self.heat_block = False
+        # статус включения ВНМ
+        self.rfq_block = False
 
         self.uic = uic
 
@@ -73,8 +79,12 @@ class Main_Control(object):
 
         self.dict = {}
         self.dictBut = {}
+        self.dict_vent = {}
         # инициализация словаря регистров для Индикаторов защиты
         self.leds = []#['X0','X1','M24','X12','X13','M25']
+        self.blk_ventil = [] #['X0','X1','M24']
+        self.blk_heat = [] #['X0','X1','M24','X12','X13','M25','M3']
+        self.blk_rfq = [] #['X0','X1','M24','X12','X13','M25','M3','M1']
         self.initDictOfLedsAndButton()
 
         self.setSignalHandler()
@@ -82,6 +92,11 @@ class Main_Control(object):
 
     def initDictOfLedsAndButton(self):
         self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
+        self.blk_ventil = ['X0','X1','M24']
+        self.blk_heat = ['X0','X1','M24','X12','X13','M3']
+        self.blk_rfq = ['X0','X1','M24','X12','X13','M3','M1']
+        self.rfq_statled = 'M5'
+
 
         self.dict['X0'] = self.uic.protect_Door_Led
         self.dict['X1'] = self.uic.protect_Barbell_Led
@@ -93,9 +108,9 @@ class Main_Control(object):
         self.dict['M3'] = self.uic.ventil_Status
         self.dict['M5'] = self.uic.bhm_Rfq_Status
 
-        self.dictBut['M1'] = self.uic.heat_pushButton
-        self.dictBut['M3'] = self.uic.ventil_pushButton
-        self.dictBut['M5'] = self.uic.bhm_Rfq_pushButton
+        self.dictBut['heat_pb'] = 'M1'
+        self.dictBut['ventil_pb'] = 'M3'
+        self.dictBut['Rfq_pb'] = 'M5'
 
 
     def setSignalHandler(self):
@@ -106,24 +121,30 @@ class Main_Control(object):
         self.uic.cur_Volt_pushButton.clicked.connect(self.test)
 
     def ventil_On(self):
-        if self.parsed_json['argout'][0]['M3'] == 0:
-            inn = ["M3","1"]
+        if self.parsed_json['argout'][0][self.dictBut['ventil_pb']] == 0:
+            inn = [self.dictBut['ventil_pb'],"1"]
+            # self.ventil_status = 1
         else:
-            inn = ["M3","0"]
+            inn = [self.dictBut['ventil_pb'],"0"]
+            # self.ventil_status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def heat_On(self):
-        if self.parsed_json['argout'][0]['M1'] == 0:
-            inn = ["M1","1"]
+        if self.parsed_json['argout'][0][self.dictBut['heat_pb']] == 0:
+            inn = [self.dictBut['heat_pb'],"1"]
+            # self.heat_status = 1
         else:
-            inn = ["M1","0"]
+            inn = [self.dictBut['heat_pb'],"0"]
+            # self.heat_status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def bhm_Rfq_On(self):
-        if self.parsed_json['argout'][0]['M5'] == 0:
-            inn = ["M5","1"]
+        if self.parsed_json['argout'][0][self.dictBut['Rfq_pb']] == 0:
+            inn = [self.dictBut['Rfq_pb'],"1"]
+            # self.rfq_Status = 1
         else:
-            inn = ["M5","0"]
+            inn = [self.dictBut['Rfq_pb'],"0"]
+            # self.rfq_Status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
     def test(self):
@@ -147,8 +168,8 @@ class Main_Control(object):
             self.parsed_json = json.loads(json_from_serv)
             self.setLedColorStatus(self.parsed_json)
             self.set_LcdNumbers_Value()
-            if MDEBUG:
-                print self.parsed_json['readStatus']
+            # if MDEBUG:
+            #     print self.parsed_json['readStatus']
         except PyTango.DevFailed as exc:
             self.setDisablePanels()
             self.parsed_json['readStatus'] = 0
@@ -160,7 +181,7 @@ class Main_Control(object):
             # self.dev.command_inout("Init")
             if MDEBUG:
                 print("key error in parsed_json")
-            print("key error in parsed_json")
+            # print("key error in parsed_json")
 
     def setDisablePanels(self):
         # отключение панелей, если не все флаги состояния защиты активны
@@ -205,20 +226,18 @@ class Main_Control(object):
         if isConnected == True:
             self.protect_Status = True
             self.system_Status = True
+            self.ventil_block = True
+            self.heat_block = True
+            self.rfq_block = True
         else:
             self.protect_Status = False
             self.system_Status = False
 
         for key in self.leds:
-            if MDEBUG & phk & pag:
-                print(str(key) + " ---> " + str(parsed['argout'][0][key]))
+            # включение выключение лампочек статусов
+            # # if MDEBUG & phk & pag:
+            # #     sys.stdout.write(" " + str(key) + "=" + str(parsed['argout'][0][key]))
             if isConnected:
-                if key[0] == 'X' or key == 'M24':
-                    # Проверка состояния элементов защиты, если все флаги 1, то 1
-                    # если хотя-бы один 0,то 0
-                    self.protect_Status = self.protect_Status & parsed['argout'][0][key]
-                if key[0] == 'M':
-                    self.system_Status = self.system_Status & parsed['argout'][0][key]
                 if parsed['argout'][0][key] == 1:
                     self.dict[key].setLedColor("green")
                 else:
@@ -226,15 +245,28 @@ class Main_Control(object):
             else:
                 self.dict[key].setLedColor("red")
                 self.protect_Status = False
-        if MDEBUG:
-            print("Protect_status: " + str(self.protect_Status))
-            # self.send_to_textBrowser(QtCore.QString("Protect_status: " + str(self.protect_Status)))
+
+        self.ventil_block = self.checkBlock(self.blk_ventil,self.ventil_block,isConnected,parsed)
+        self.heat_block = self.checkBlock(self.blk_heat,self.heat_block,isConnected,parsed)
+        self.rfq_block = self.checkBlock(self.blk_rfq,self.rfq_block,isConnected,parsed)
+
         # Включение выключение системной панели и панели установки напряжения модулятора
-        self.system_Status = self.system_Status & self.protect_Status
+        self.system_Status = self.system_Status & parsed['argout'][0][self.rfq_statled]
+
         self.uic.frame_System_Main.setEnabled(self.protect_Status)
         self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
 
+        self.uic.ventil_pushButton.setEnabled(self.ventil_block)
+        self.uic.heat_pushButton.setEnabled(self.heat_block)
+        self.uic.bhm_Rfq_pushButton.setEnabled(self.rfq_block)
 
+    def checkBlock(self,btns,block,isConnected,parsed):
+        for key in btns:
+            if isConnected:
+                block = block & parsed['argout'][0][key]
+            else:
+                return False
+        return block
 
     def exceptionDialog(self, exc):
         lenExc = len(tuple(exc))
