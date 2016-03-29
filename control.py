@@ -9,6 +9,8 @@ import ui_control
 import setting
 import json
 import time
+import datetime
+import os
 from threading import Thread, Timer
 
 server_name = setting.server_name
@@ -36,6 +38,8 @@ class Main_Control2(ui_control.Ui_MainWindow):
         self.cur_Set_lineEdit.text()
         self.cur_Set_lineEdit.setValidator()
         self.Volt_Set_lineEdit
+        strr =  self.output_textBrowser.toPlainText()
+        QtCore.QString.mid(0,99)
 
 class Main_Control(object):
     def __init__(self,uic):
@@ -119,6 +123,7 @@ class Main_Control(object):
         self.uic.heat_pushButton.clicked.connect(self.heat_On)
         self.uic.bhm_Rfq_pushButton.clicked.connect(self.bhm_Rfq_On)
         self.uic.cur_Volt_pushButton.clicked.connect(self.test)
+        self.uic.clearEdit_pushButton.clicked.connect(self.clearEdit)
 
     def ventil_On(self):
         if self.rfq_block != 0:
@@ -149,6 +154,11 @@ class Main_Control(object):
             # self.rfq_Status = 0
         self.dev.command_inout("WriteRegisterOrFlag",inn)
 
+    def clearEdit(self):
+        txt =  self.uic.output_textBrowser.toPlainText()
+        self.save_to_logfile(txt)
+        self.uic.output_textBrowser.clear()
+
     def test(self):
         val = self.uic.cur_Set_lineEdit.text()
         print("TEST:" + str(val))
@@ -170,6 +180,8 @@ class Main_Control(object):
             self.parsed_json = json.loads(json_from_serv)
             self.setLedColorStatus(self.parsed_json)
             self.set_LcdNumbers_Value()
+            if MDEBUG:
+                self.out_Value_regflags_toBrowser(self.parsed_json['argout'][0])
             # if MDEBUG:
             #     print self.parsed_json['readStatus']
         except PyTango.DevFailed as exc:
@@ -289,8 +301,35 @@ class Main_Control(object):
         error = QtGui.QMessageBox(QtGui.QMessageBox.Critical,"Error",mes,buttons = QtGui.QMessageBox.Ok)
         error.exec_()
 
-    def send_to_textBrowser(self,txt):
+    def out_Value_regflags_toBrowser(self,parsedArgout):
+        txt = ""
+        for key in parsedArgout:
+            txt = txt + "<b>" + str(key) + "</b>" + "->" + str(parsedArgout[key]) + "  "
+        txt = txt + "<br><br>"
+        self.send_to_textBrowser(txt)
+
+
+    def save_to_logfile(self,strr):
         # self.output_textBrowser = QtGui.QTextBrowser(self.frame_2)
+        if strr.count() == 0:
+            return
+        now = datetime.datetime.now()
+        timeF = str(now.year) + str("%02d" % now.month) + str("%02d" % now.day)
+        timeT = str("%02d" % now.hour) + str("%02d" % now.minute) + str("%02d" % now.second)
+
+        if not os.path.exists("./log"):
+            os.makedirs("./log")
+        fnm = "log_" + timeF + timeT + ".out"
+        f = open(str("./log/" + fnm),'w')
+        f.write(strr)
+        f.close()
+
+    def send_to_textBrowser(self,txt):
+        maxnum = 100000
+        strr =  self.uic.output_textBrowser.toPlainText()
+        if (strr.count() > maxnum):
+            self.save_to_logfile(strr)
+            self.clearEdit()
         ct = QtCore.QTime.currentTime()
         in_txt = "<b>" + ct.toString() + "</b>" + " " + txt;
         self.uic.output_textBrowser.append(in_txt)
