@@ -95,21 +95,22 @@ class Main_Control(object):
         self.timer.start()
 
     def initDictOfLedsAndButton(self):
-        self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
+        #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
+	self.leds = ['X0','X1','M24','X10','X11','X3','M45','M5'] #25?
         self.blk_ventil = ['X0','X1','M24']
-        self.blk_heat = ['X0','X1','M24','X12','X13','M3']
-        self.blk_rfq = ['X0','X1','M24','X12','X13','M3','M1']
+        self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
+        self.blk_rfq = ['X0','X1','M24','X10','X11','M45','X3'] #M3->M45
         self.rfq_statled = 'M5'
 
 
         self.dict['X0'] = self.uic.protect_Door_Led
         self.dict['X1'] = self.uic.protect_Barbell_Led
         self.dict['M24'] = self.uic.protect_External_Led
-        self.dict['X12'] = self.uic.protect_Transformator_Led
-        self.dict['X13'] = self.uic.protect_Lamp_Led
+        self.dict['X10'] = self.uic.protect_Transformator_Led
+        self.dict['X11'] = self.uic.protect_Lamp_Led
         # self.dict['M25'] = self.uic.protect_Vacuum_Led
-        self.dict['M1'] = self.uic.heat_Status
-        self.dict['M3'] = self.uic.ventil_Status
+        self.dict['X3'] = self.uic.heat_Status
+        self.dict['M45'] = self.uic.ventil_Status
         self.dict['M5'] = self.uic.bhm_Rfq_Status
 
         self.dictBut['heat_pb'] = 'M1'
