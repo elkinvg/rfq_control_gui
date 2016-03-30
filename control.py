@@ -18,28 +18,10 @@ json_get = setting.json_get
 MDEBUG = setting.MDEBUG
 timer_sec = setting.timer_sec * 1000
 
-class Main_Control2(ui_control.Ui_MainWindow):
-    def __init__(self):
-        self.frame_Protect_Main.setEnabled(False)
-        self.connectStatus_Led.setLedColor()
-        self.ventil_pushButton.clicked.connect()
-        self.heat_pushButton.clicked.connect()
-        self.bhm_Rfq_pushButton.clicked.connect()
-        self.ventil_Status
-        self.heat_Status
-        self.bhm_Rfq_Status
-        self.bhm_Rfq_pushButton
-        self.output_textBrowser.append("")
-        self.heat_pushButton.text()[0]
-        self.frame_HighVoltage_Main
-        self.Volt_Get_lcdNumber.display()
-        self.system_lcdNumber.display()
-        self.cur_Get_lcdNumber.display()
-        self.cur_Set_lineEdit.text()
-        self.cur_Set_lineEdit.setValidator()
-        self.Volt_Set_lineEdit
-        strr =  self.output_textBrowser.toPlainText()
-        QtCore.QString.mid(0,99)
+# class Main_Control2(ui_control.Ui_MainWindow):
+#     def __init__(self):
+#         self.frame_Protect_Main.setEnabled(False)
+
 
 class Main_Control(object):
     def __init__(self,uic):
@@ -125,6 +107,8 @@ class Main_Control(object):
         self.uic.bhm_Rfq_pushButton.clicked.connect(self.bhm_Rfq_On)
         self.uic.cur_Volt_pushButton.clicked.connect(self.test)
         self.uic.clearEdit_pushButton.clicked.connect(self.clearEdit)
+        self.uic.clsSign.connect(self.clearEdit)
+
 
     def ventil_On(self):
         if self.rfq_block != 0:
@@ -335,10 +319,16 @@ class Main_Control(object):
         in_txt = "<b>" + ct.toString() + "</b>" + " " + txt;
         self.uic.output_textBrowser.append(in_txt)
 
+class MyWindowQ(QtGui.QMainWindow):
+    trigger = QtCore.pyqtSignal()
+    def closeEvent(self, event):
+        self.trigger.emit()
+        event.accept()
+
 if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
+    MainWindow = MyWindowQ()
     ui = ui_control.Ui_MainWindow()
     # ui = Main_Control()
     ui.setupUi(MainWindow)

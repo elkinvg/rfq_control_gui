@@ -23,8 +23,10 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-# class Ui_MainWindow(QtGui.QMainWindow):
-class Ui_MainWindow(object):
+class Ui_MainWindow(QtCore.QObject):
+# class Ui_MainWindow(object):
+    clsSign = QtCore.pyqtSignal()
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
@@ -93,6 +95,13 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        # здесь проходит серия сигналов ... один сигнал порождает другой
+        # на данный момет было самое быстрое решение
+        MainWindow.trigger.connect(self.tst2)
+
+    def tst2(self):
+        self.clsSign.emit()
+
 
     def addAndInitFrameProtectMain(self):
         self.frame_Protect_Main = QtGui.QFrame(self.frame)
