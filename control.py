@@ -25,10 +25,6 @@ timer_sec = setting.timer_sec * 1000
 
 class Main_Control(object):
     def __init__(self,uic):
-        # uic = ui_control()
-        # # super(Main_Control, self).__init__()
-        # # self.timer = Timer(1,self.getInfoFromServerInJson)
-        # # self.timer.start()
 
         try:
             self.dev = PyTango.DeviceProxy(server_name)
@@ -78,11 +74,12 @@ class Main_Control(object):
 
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
-	self.leds = ['X0','X1','M24','X10','X11','X3','M45','M5'] #25?
+	self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
         self.blk_ventil = ['X0','X1','M24']
         self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
-        self.blk_rfq = ['X0','X1','M24','X10','X11','M45','X3'] #M3->M45
-        self.rfq_statled = 'M5'
+        self.blk_rfq = ['X0','X1','M24','X10','X11','M25','M45','X3'] #M3->M45
+        # self.rfq_statled = 'M5'
+        self.rfq_statled = 'X15'
 
 
         self.dict['X0'] = self.uic.protect_Door_Led
@@ -90,10 +87,11 @@ class Main_Control(object):
         self.dict['M24'] = self.uic.protect_External_Led
         self.dict['X10'] = self.uic.protect_Transformator_Led
         self.dict['X11'] = self.uic.protect_Lamp_Led
-        # self.dict['M25'] = self.uic.protect_Vacuum_Led
+        self.dict['M25'] = self.uic.protect_Vacuum_Led
         self.dict['X3'] = self.uic.heat_Status
         self.dict['M45'] = self.uic.ventil_Status
-        self.dict['M5'] = self.uic.bhm_Rfq_Status
+        # self.dict['M5'] = self.uic.bhm_Rfq_Status
+        self.dict['X15'] = self.uic.bhm_Rfq_Status
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
@@ -242,6 +240,7 @@ class Main_Control(object):
                     self.dict[key].setLedColor("green")
                 else:
                     self.dict[key].setLedColor("red")
+                    self.system_Status = False
             else:
                 self.dict[key].setLedColor("red")
                 self.protect_Status = False
@@ -251,7 +250,7 @@ class Main_Control(object):
         self.rfq_block = self.checkBlock(self.blk_rfq,self.rfq_block,isConnected,parsed)
 
         # Включение выключение системной панели и панели установки напряжения модулятора
-        self.system_Status = self.system_Status & parsed['argout'][0][self.rfq_statled]
+        # self.system_Status = self.system_Status & parsed['argout'][0][self.rfq_statled]
 
         self.uic.frame_System_Main.setEnabled(self.protect_Status)
         self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
