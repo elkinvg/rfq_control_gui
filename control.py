@@ -74,12 +74,14 @@ class Main_Control(object):
 
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
-	self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
+        # self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
+        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13'] #25?
         self.blk_ventil = ['X0','X1','M24']
         self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
         self.blk_rfq = ['X0','X1','M24','X10','X11','M25','M45','X3'] #M3->M45
         # self.rfq_statled = 'M5'
-        self.rfq_statled = 'X15'
+        # self.rfq_statled = 'X15'
+        self.rfq_statled = 'X13'
 
 
         self.dict['X0'] = self.uic.protect_Door_Led
@@ -91,7 +93,8 @@ class Main_Control(object):
         self.dict['X3'] = self.uic.heat_Status
         self.dict['M45'] = self.uic.ventil_Status
         # self.dict['M5'] = self.uic.bhm_Rfq_Status
-        self.dict['X15'] = self.uic.bhm_Rfq_Status
+        # self.dict['X15'] = self.uic.bhm_Rfq_Status
+        self.dict['X13'] = self.uic.bhm_Rfq_Status
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
