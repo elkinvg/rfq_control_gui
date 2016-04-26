@@ -18,9 +18,11 @@ json_get = setting.json_get
 MDEBUG = setting.MDEBUG
 timer_sec = setting.timer_sec * 1000
 
-# class Main_Control2(ui_control.Ui_MainWindow):
-#     def __init__(self):
-#         self.frame_Protect_Main.setEnabled(False)
+class Main_Control2(ui_control.Ui_MainWindow):
+    def __init__(self):
+        self.frame_Protect_Main.setEnabled(False)
+        self.Volt_Set_lineEdit.setText()
+        self.cur_Get_lcdNumber.setRa
 
 
 class Main_Control(object):
@@ -43,10 +45,13 @@ class Main_Control(object):
         # статус включения ВНМ
         self.rfq_block = False
 
+        self.firstRun = True
+
         self.uic = uic
 
         # установка валидатора
         vd = QtGui.QIntValidator()
+        vd.setRange(0,65535)
         self.uic.cur_Set_lineEdit.setValidator(vd)
         self.uic.Volt_Set_lineEdit.setValidator(vd)
         # парсинг строки статусов и значений регистров и флагов
@@ -71,6 +76,7 @@ class Main_Control(object):
 
         self.setSignalHandler()
         self.timer.start()
+
 
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
@@ -166,6 +172,13 @@ class Main_Control(object):
             self.parsed_json = json.loads(json_from_serv)
             self.setLedColorStatus(self.parsed_json)
             self.set_LcdNumbers_Value()
+            if self.firstRun:
+                ddd = str(self.parsed_json['argout'][0]['D66'])
+                self.uic.Volt_Set_lineEdit.setText(ddd)
+                ddd = str(self.parsed_json['argout'][0]['D68'])
+                self.uic.cur_Set_lineEdit.setText(ddd)
+                self.firstRun = False
+                # self.out_Value_regflags_toBrowser(self.parsed_json['argout'][0])
             if MDEBUG:
                 self.out_Value_regflags_toBrowser(self.parsed_json['argout'][0])
             # if MDEBUG:
@@ -199,7 +212,7 @@ class Main_Control(object):
             val = self.parsed_json['argout'][0]['D98']
             self.uic.Volt_Get_lcdNumber.display(val)
             # ток заряда емкостей длинной линии модулятора RFQ
-            val = self.parsed_json['argout'][0]['D9']
+            val = self.parsed_json['argout'][0]['D9']/100.
             self.uic.cur_Get_lcdNumber.display(val)
         else:
             self.uic.system_lcdNumber.display(0)
