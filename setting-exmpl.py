@@ -6,7 +6,12 @@ MDEBUG = True
 ### Вывод значений регистров и флагов полученных с MODBUS в textEdit
 # MODBUSOUT = True
 MODBUSOUT = False
-os.environ['TANGO_HOST'] = '172.16.21.5:10000'
-server_name = "test/mb/con"
+# путь к танго-серверу модулятора
+server_name = "tango://localhost:10000/test/mb/con"
+# имя метода получения значений всех регистров и флагов в JSON
 json_get = "ReadAllRegistersAndFlagsFromCacheInJson"
+# установка времени таймера запроса по модбасу
 timer_sec = 3
+# установка размера текста в выводе
+fontSize = 7
+

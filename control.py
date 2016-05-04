@@ -17,6 +17,7 @@ server_name = setting.server_name
 json_get = setting.json_get
 MDEBUG = setting.MDEBUG
 MODBUSOUT = setting.MODBUSOUT
+fontSize = setting.fontSize
 timer_sec = setting.timer_sec * 1000
 
 class Main_Control2(ui_control.Ui_MainWindow):
@@ -74,6 +75,11 @@ class Main_Control(object):
         self.blk_heat = [] #['X0','X1','M24','X12','X13','M25','M3']
         self.blk_rfq = [] #['X0','X1','M24','X12','X13','M25','M3','M1']
         self.initDictOfLedsAndButton()
+
+        # установка размера шрифта в выводе
+        font = QtGui.QFont()
+        font.setPointSize(fontSize)
+        self.uic.output_textBrowser.setFont(font)
 
         self.setSignalHandler()
         self.timer.start()
