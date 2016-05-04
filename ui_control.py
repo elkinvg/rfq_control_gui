@@ -65,7 +65,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.output_textBrowser = QtGui.QTextBrowser(self.frame_2)
         # self.output_textBrowser.setFixedWidth(263)
         font = QtGui.QFont()
-        font.setPointSize(6)
+        font.setPointSize(7)
         # self.label_4.setFont(font)
         self.output_textBrowser.setFont(font)
         self.hoLay = QtGui.QHBoxLayout()

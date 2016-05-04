@@ -16,6 +16,7 @@ from threading import Thread, Timer
 server_name = setting.server_name
 json_get = setting.json_get
 MDEBUG = setting.MDEBUG
+MODBUSOUT = setting.MODBUSOUT
 timer_sec = setting.timer_sec * 1000
 
 class Main_Control2(ui_control.Ui_MainWindow):
@@ -112,7 +113,8 @@ class Main_Control(object):
         self.uic.ventil_pushButton.clicked.connect(self.ventil_On)
         self.uic.heat_pushButton.clicked.connect(self.heat_On)
         self.uic.bhm_Rfq_pushButton.clicked.connect(self.bhm_Rfq_On)
-        self.uic.cur_Volt_pushButton.clicked.connect(self.test)
+        self.uic.cur_Volt_pushButton.clicked.connect(self.setCurVoltage)
+        # self.uic.cur_Volt_pushButton.clicked.connect(self.test)
         self.uic.clearEdit_pushButton.clicked.connect(self.clearEdit)
         self.uic.clsSign.connect(self.clearEdit)
 
@@ -163,26 +165,102 @@ class Main_Control(object):
         aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
         print(aa)
 
+    def setCurVoltage(self):
+        try:
+            txt = "Установлены значения "
+            val = self.uic.cur_Set_lineEdit.text()
+            st = True
+            if MDEBUG:
+                print("TEST:" + str(val))
+            inn = ["D68",str(val)]
+            aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+            txt = txt + " ток: <b>" + str(val) + "мА</b>, "
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            val = self.uic.Volt_Set_lineEdit.text()
+            inn = ["D66",str(val)]
+            if MDEBUG:
+                print("TEST2:" + str(val))
+            aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+            txt = txt + " напряжение: <b>" + str(val) + "В</b><br>"
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            if st:
+                self.send_to_textBrowser(QtCore.QObject.trUtf8(app, txt))
+                # self.send_to_textBrowser(u"ППлоывралтыслвап")
+        except PyTango.DevFailed as exc:
+            if MDEBUG:
+                print("exc in setCurVoltage")
+
+    def changedStatus(self):
+        for key in self.leds:
+            col = self.dict[key].getLedColor()
+            if col == "green":
+                stat = 1
+            if col == "red":
+                stat = 0
+            # print self.parsed_json['argout'][0][key]
+            # print stat
+            if stat != self.parsed_json['argout'][0][key]:
+                if key == 'X0':
+                    mod = "Двери модулятора закрыты"
+                elif key == 'X1':
+                    mod = "Штанга повешена"
+                elif key == 'M24':
+                    mod = "Внешнее управление"
+                elif key == 'X10':
+                    mod = "Охлаждение накального трасформатора"
+                elif key == 'X11':
+                    mod = "Охлаждение лампы"
+                elif key == 'M25':
+                    mod = "Вакуум"
+                elif key == 'M45':
+                    mod = "Вентилятор"
+                elif key == 'X3':
+                    mod = "Накал"
+                elif key == 'X13':
+                    mod = "ВНМ RFQ"
+
+                mes = "Статус <b>" + mod + "</b> поменялся на " + str(self.parsed_json['argout'][0][key]) + "<br>"
+                self.send_to_textBrowser(QtCore.QObject.trUtf8(app, mes))
 
     def getInfoFromServerInJson(self):
         try:
             # dev = PyTango.DeviceProxy(server_name)
             # parsed_json = {}
             json_from_serv = self.dev.command_inout(json_get)
+
+            # Проверка предыдущего статуса для предотвращения лишнего вывода
+            prereadStatus = False
+            if self.firstRun != True:
+                prereadStatus = self.parsed_json['readStatus']
             self.parsed_json = json.loads(json_from_serv)
+            readStatus = self.parsed_json['readStatus']
+
+            # Вывод в случае изменения одного из статусов
+            if (self.firstRun == False and readStatus==1 and prereadStatus==1):
+                self.changedStatus()
+
             self.setLedColorStatus(self.parsed_json)
             self.set_LcdNumbers_Value()
+
             if self.firstRun:
                 ddd = str(self.parsed_json['argout'][0]['D66'])
                 self.uic.Volt_Set_lineEdit.setText(ddd)
                 ddd = str(self.parsed_json['argout'][0]['D68'])
                 self.uic.cur_Set_lineEdit.setText(ddd)
                 self.firstRun = False
+                if (readStatus == 0):
+                    mes = u"Нет соединения с контроллером"
+                    self.send_to_textBrowser(mes)
+                    # self.out_Value_regflags_toBrowser(self.parsed_json['readStatus'])
                 # self.out_Value_regflags_toBrowser(self.parsed_json['argout'][0])
-            if MDEBUG:
+
+            if MODBUSOUT:
                 self.out_Value_regflags_toBrowser(self.parsed_json['argout'][0])
-            # if MDEBUG:
-            #     print self.parsed_json['readStatus']
+
         except PyTango.DevFailed as exc:
             self.setDisablePanels()
             self.parsed_json['readStatus'] = 0
@@ -287,7 +365,7 @@ class Main_Control(object):
         error = QtGui.QMessageBox(QtGui.QMessageBox.Critical,"Error",str,buttons = QtGui.QMessageBox.Ok)
         error.exec_()
 
-    def exceptionDialog(self, exc):
+    def messageException(self,exc):
         lenExc = len(tuple(exc))
 
         mes = QtCore.QString("<b>Exceptions:</b><br><br>")
@@ -297,7 +375,15 @@ class Main_Control(object):
             mes = mes + QtCore.QString("<b>Description</b>: " + str(exc.args[k].desc) + "<br>")
             # mes = mes + QtCore.QString("<b>Origin</b>: " + str(exc.args[k].origin) + "<br>")
             mes = mes + QtCore.QString("<br>")
+        return mes
 
+    def printException(self, exc):
+        lenExc = len(tuple(exc))
+        mes = self.messageException(exc)
+        self.send_to_textBrowser(QtCore.QObject.trUtf8(app, mes))
+
+    def exceptionDialog(self, exc):
+        mes = self.messageException(exc)
         error = QtGui.QMessageBox(QtGui.QMessageBox.Critical,"Error",mes,buttons = QtGui.QMessageBox.Ok)
         error.exec_()
 
@@ -321,7 +407,7 @@ class Main_Control(object):
             os.makedirs("./log")
         fnm = "log_" + timeF + timeT + ".out"
         f = open(str("./log/" + fnm),'w')
-        f.write(strr)
+        f.write(strr.toUtf8())
         f.close()
 
     def send_to_textBrowser(self,txt):
