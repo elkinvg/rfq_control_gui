@@ -52,13 +52,24 @@ class Main_Control(object):
 
         self.uic = uic
 
-        # установка валидатора
-        vd = QtGui.QIntValidator()
-        vd.setRange(0,65535)
-        self.uic.cur_Set_lineEdit.setValidator(vd)
-        self.uic.Volt_Set_lineEdit.setValidator(vd)
-        # парсинг строки статусов и значений регистров и флагов
-        self.parsed_json = {}
+        # # установка валидатора
+        # vd = QtGui.QIntValidator()
+        # vd.setRange(0,65535)
+        # self.uic.cur_Set_lineEdit.setValidator(vd)
+        # self.uic.Volt_Set_lineEdit.setValidator(vd)
+        # # парсинг строки статусов и значений регистров и флагов
+        # self.parsed_json = {}
+
+        # Свойства для установки тока и напряжения
+        self.uic.cur_Set_lineEdit.setMinimum(0)
+        self.uic.cur_Set_lineEdit.setMaximum(60000)
+        self.uic.cur_Set_lineEdit.setSingleStep(10)
+        # self.uic.cur_Set_lineEdit.setSuffix('mA')
+
+        self.uic.Volt_Set_lineEdit.setMinimum(0)
+        self.uic.Volt_Set_lineEdit.setMaximum(60000)
+        self.uic.Volt_Set_lineEdit.setSingleStep(100)
+
 
         # блокировка панелей включения и установки
         # self.setEnabledPanels( self.uic,False)
@@ -259,9 +270,11 @@ class Main_Control(object):
 
             if self.firstRun:
                 ddd = str(self.parsed_json['argout'][0]['D66'])
-                self.uic.Volt_Set_lineEdit.setText(ddd)
+                # self.uic.Volt_Set_lineEdit.setText(ddd)
+                self.uic.Volt_Set_lineEdit.setValue(int(ddd))
                 ddd = str(self.parsed_json['argout'][0]['D68'])
-                self.uic.cur_Set_lineEdit.setText(ddd)
+                #self.uic.cur_Set_lineEdit.setText(ddd)
+                self.uic.cur_Set_lineEdit.setValue(int(ddd))
                 self.firstRun = False
                 if (readStatus == 0):
                     mes = u"Нет соединения с контроллером"

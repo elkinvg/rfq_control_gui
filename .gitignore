@@ -2,3 +2,5 @@
 *.pyc
 *.pyo
 setting.py
+log/*
+*-bck*
