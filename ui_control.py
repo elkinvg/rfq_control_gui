@@ -31,7 +31,7 @@ class Ui_MainWindow(QtCore.QObject):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
         # MainWindow.setFixedSize(1020, 616)
-        MainWindow.setFixedSize(1120, 616)
+        # MainWindow.setFixedSize(1120, 616)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -44,6 +44,12 @@ class Ui_MainWindow(QtCore.QObject):
         self.verticalLayout = QtGui.QVBoxLayout(self.frame)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
 
+        self.horizontalLayout_st = QtGui.QHBoxLayout()
+        self.horizontalLayout_st.setObjectName(_fromUtf8("horizontalLayout_st"))
+
+        self.frame_2 = QtGui.QFrame(self.centralwidget)
+        self.addStatusLed()
+
         #init frame_Protect_Main
         self.addAndInitFrameProtectMain()
 
@@ -52,10 +58,6 @@ class Ui_MainWindow(QtCore.QObject):
 
         #init frame_HighVoltage_Main (self.frame_7)
         self.addAndInitFrameHighVoltage_Main()
-
-
-
-        self.frame_2 = QtGui.QFrame(self.centralwidget)
 
         self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
@@ -71,10 +73,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.hoLay = QtGui.QHBoxLayout()
         spacerItem7 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.hoLay.addItem(spacerItem7)
-        self.connectStatus_Led = TaurusLed(self.frame_2)
-        self.connectStatus_Led.setLedColor("red")
-        self.connectStatus_Led.setFixedSize(35,35)
-        self.hoLay.addWidget(self.connectStatus_Led)
+        # self.connectStatus_Led = TaurusLed(self.frame_2)
+        # self.connectStatus_Led.setLedColor("red")
+        # self.connectStatus_Led.setFixedSize(35,35)
+        # self.hoLay.addWidget(self.connectStatus_Led)
         self.verticalLayout_4.addLayout(self.hoLay)
         self.output_textBrowser.setObjectName(_fromUtf8("output_textBrowser"))
         self.verticalLayout_4.addWidget(self.output_textBrowser)
@@ -102,6 +104,19 @@ class Ui_MainWindow(QtCore.QObject):
         # здесь проходит серия сигналов ... один сигнал порождает другой
         # на данный момет было самое быстрое решение
         MainWindow.trigger.connect(self.tst2)
+
+    def addStatusLed(self):
+        self.connectStatus_Led = TaurusLed(self.frame_2)
+        self.connectStatus_Led.setLedColor("red")
+        self.connectStatus_Led.setFixedSize(35,35)
+        self.horizontalLayout_st.addWidget(self.connectStatus_Led)
+        self.labelTango = QtGui.QLabel()
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.labelTango.setFont(font)
+        self.labelTango.setObjectName(_fromUtf8("labelTango"))
+        self.horizontalLayout_st.addWidget(self.labelTango)
+        self.verticalLayout.addLayout(self.horizontalLayout_st)
 
     def tst2(self):
         self.clsSign.emit()
@@ -408,6 +423,7 @@ class Ui_MainWindow(QtCore.QObject):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Управление модулятором", None))
         self.labelMainTop.setText(_translate("MainWindow", "Состояние элементов защиты", None))
+        self.labelTango.setText(_translate("MainWindow", "Подключение к серверу Tango", None))
         self.protect_Lamp.setText(_translate("MainWindow", "Охлаждение лампы", None))
         self.protect_External.setText(_translate("MainWindow", "Внешнее управление", None))
         self.protect_Door.setText(_translate("MainWindow", "Двери модулятора закрыты", None))

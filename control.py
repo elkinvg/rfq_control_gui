@@ -17,6 +17,7 @@ server_name = setting.server_name
 json_get = setting.json_get
 MDEBUG = setting.MDEBUG
 MODBUSOUT = setting.MODBUSOUT
+TEXTEDIT = setting.TEXTEDIT
 fontSize = setting.fontSize
 timer_sec = setting.timer_sec * 1000
 
@@ -75,6 +76,10 @@ class Main_Control(object):
         self.blk_heat = [] #['X0','X1','M24','X12','X13','M25','M3']
         self.blk_rfq = [] #['X0','X1','M24','X12','X13','M25','M3','M1']
         self.initDictOfLedsAndButton()
+
+        # Скрытие тектового вывода
+        if TEXTEDIT == False:
+            self.uic.frame_2.hide()
 
         # установка размера шрифта в выводе
         font = QtGui.QFont()
@@ -422,7 +427,7 @@ class Main_Control(object):
         if (strr.count() > maxnum):
             self.save_to_logfile(strr)
             self.clearEdit()
-        ct = QtCore.QTime.currentTime()
+        ct = QtCore.QDateTime.currentDateTime()
         in_txt = "<b>" + ct.toString() + "</b>" + " " + txt;
         self.uic.output_textBrowser.append(in_txt)
 
@@ -436,6 +441,10 @@ if __name__ == "__main__":
     import sys
     app = QtGui.QApplication(sys.argv)
     MainWindow = MyWindowQ()
+    if TEXTEDIT == True:
+        MainWindow.setFixedSize(1120, 650)
+    else:
+        MainWindow.setFixedSize(800, 650)
     ui = ui_control.Ui_MainWindow()
     # ui = Main_Control()
     ui.setupUi(MainWindow)
