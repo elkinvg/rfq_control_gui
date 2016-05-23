@@ -116,6 +116,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.labelTango.setFont(font)
         self.labelTango.setObjectName(_fromUtf8("labelTango"))
         self.horizontalLayout_st.addWidget(self.labelTango)
+
+        self.outtextRadioButton = QtGui.QRadioButton()
+        self.outtextRadioButton.setText(_fromUtf8("Показать вывод"))
+        self.horizontalLayout_st.addWidget(self.outtextRadioButton)
+
         self.verticalLayout.addLayout(self.horizontalLayout_st)
 
     def tst2(self):

@@ -21,11 +21,15 @@ TEXTEDIT = setting.TEXTEDIT
 fontSize = setting.fontSize
 timer_sec = setting.timer_sec * 1000
 
+sizeWindowWithEdit = setting.sizeWindowWithEdit
+sizeWindowWithoutEdit = setting.sizeWindowWithoutEdit
+
 class Main_Control2(ui_control.Ui_MainWindow):
     def __init__(self):
         self.frame_Protect_Main.setEnabled(False)
         self.Volt_Set_lineEdit.setText()
-        self.cur_Get_lcdNumber.setRa
+        # self.cur_Get_lcdNumber.setRa
+        self.frame_2.show()
 
 
 class Main_Control(object):
@@ -91,6 +95,9 @@ class Main_Control(object):
         # Скрытие тектового вывода
         if TEXTEDIT == False:
             self.uic.frame_2.hide()
+            self.uic.outtextRadioButton.setChecked(False)
+        else:
+            self.uic.outtextRadioButton.setChecked(True)
 
         # установка размера шрифта в выводе
         font = QtGui.QFont()
@@ -139,6 +146,15 @@ class Main_Control(object):
         # self.uic.cur_Volt_pushButton.clicked.connect(self.test)
         self.uic.clearEdit_pushButton.clicked.connect(self.clearEdit)
         self.uic.clsSign.connect(self.clearEdit)
+        self.uic.outtextRadioButton.toggled.connect(self.showOutput)
+
+    def showOutput(self):
+        if (self.uic.outtextRadioButton.isChecked() == True):
+            self.uic.frame_2.show()
+            MainWindow.setFixedSize(sizeWindowWithEdit[0],sizeWindowWithEdit[1])
+        else:
+            self.uic.frame_2.hide()
+            MainWindow.setFixedSize(sizeWindowWithoutEdit[0],sizeWindowWithoutEdit[1])
 
 
     def ventil_On(self):
@@ -455,9 +471,9 @@ if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
     MainWindow = MyWindowQ()
     if TEXTEDIT == True:
-        MainWindow.setFixedSize(1120, 650)
+        MainWindow.setFixedSize(sizeWindowWithEdit[0],sizeWindowWithEdit[1])
     else:
-        MainWindow.setFixedSize(800, 650)
+        MainWindow.setFixedSize(sizeWindowWithoutEdit[0],sizeWindowWithoutEdit[1])
     ui = ui_control.Ui_MainWindow()
     # ui = Main_Control()
     ui.setupUi(MainWindow)
