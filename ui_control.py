@@ -24,7 +24,7 @@ except AttributeError:
         return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_MainWindow(QtCore.QObject):
-# class Ui_MainWindow(object):
+    # class Ui_MainWindow(object):
     clsSign = QtCore.pyqtSignal()
 
     def setupUi(self, MainWindow):
@@ -58,6 +58,10 @@ class Ui_MainWindow(QtCore.QObject):
 
         #init frame_HighVoltage_Main (self.frame_7)
         self.addAndInitFrameHighVoltage_Main()
+
+        #??? !!! TST
+        self.addAndInitFrameHighVoltage_Main_Buncher()
+        #self.addAndInitFrameBuncher_Main()
 
         self.frame_2.setFrameShape(QtGui.QFrame.StyledPanel)
         self.frame_2.setFrameShadow(QtGui.QFrame.Raised)
@@ -390,6 +394,113 @@ class Ui_MainWindow(QtCore.QObject):
         self.verticalLayout.addWidget(self.frame_HighVoltage_Main)
         self.horizontalLayout.addWidget(self.frame)
 
+    # ??? !!!
+    def addAndInitFrameHighVoltage_Main_Buncher(self):
+        self.frame_HighVoltage_Main_Buncher = QtGui.QFrame(self.frame)
+        self.frame_HighVoltage_Main_Buncher.setFrameShape(QtGui.QFrame.Panel)
+        self.frame_HighVoltage_Main_Buncher.setFrameShadow(QtGui.QFrame.Raised)
+        self.frame_HighVoltage_Main_Buncher.setObjectName(_fromUtf8("frame_HighVoltage_Main_Buncher"))
+        self.gridLayout_Buncher = QtGui.QGridLayout(self.frame_HighVoltage_Main_Buncher)
+        self.gridLayout_Buncher.setObjectName(_fromUtf8("gridLayout_Buncher"))
+        self.horizontalLayout_8_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_8_Buncher.setObjectName(_fromUtf8("horizontalLayout_8_Buncher"))
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_8_Buncher.addItem(spacerItem1)
+        self.label_7_Buncher = QtGui.QLabel(self.frame_HighVoltage_Main_Buncher)
+        self.label_7_Buncher.setObjectName(_fromUtf8("label_7_Buncher"))
+        self.horizontalLayout_8_Buncher.addWidget(self.label_7_Buncher)
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_8_Buncher, 1, 2, 1, 1)
+
+        self.cur_Volt_pushButton_Buncher = QtGui.QPushButton(self.frame_HighVoltage_Main_Buncher)
+        self.cur_Volt_pushButton_Buncher.setFixedWidth(150)
+        self.cur_Volt_pushButton_Buncher.setObjectName(_fromUtf8("cur_Volt_pushButton_Buncher"))
+        self.gridLayout_Buncher.addWidget(self.cur_Volt_pushButton_Buncher, 2, 3, 1, 1)
+
+        self.horizontalLayout_5_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_5_Buncher.setObjectName(_fromUtf8("horizontalLayout_5_Buncher"))
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_5_Buncher.addItem(spacerItem2)
+
+        # self.cur_Set_lineEdit = QtGui.QLineEdit(self.frame_HighVoltage_Main)
+        self.cur_Set_lineEdit_Buncher = QtGui.QSpinBox(self.frame_HighVoltage_Main_Buncher)
+        self.setLineEditStile(self.cur_Set_lineEdit_Buncher)
+        self.cur_Set_lineEdit_Buncher.setObjectName(_fromUtf8("cur_Set_lineEdit_Buncher"))
+        self.horizontalLayout_5_Buncher.addWidget(self.cur_Set_lineEdit_Buncher)
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_5_Buncher, 2, 1, 1, 1)
+
+        self.label_4_Buncher = QtGui.QLabel(self.frame_HighVoltage_Main_Buncher)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.label_4_Buncher.setFont(font)
+        self.label_4_Buncher.setObjectName(_fromUtf8("label_4"))
+        self.gridLayout_Buncher.addWidget(self.label_4_Buncher, 2, 0, 1, 1)
+        self.label_5_Buncher = QtGui.QLabel(self.frame_HighVoltage_Main_Buncher)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.label_5_Buncher.setFont(font)
+        self.label_5_Buncher.setObjectName(_fromUtf8("label_5"))
+        self.gridLayout_Buncher.addWidget(self.label_5_Buncher, 3, 0, 1, 1)
+        self.horizontalLayout_3_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_3_Buncher.setObjectName(_fromUtf8("horizontalLayout_3_Buncher"))
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_3_Buncher.addItem(spacerItem3)
+
+        self.cur_Get_lcdNumber_Buncher = QtGui.QLCDNumber(self.frame_HighVoltage_Main_Buncher)
+        self.cur_Get_lcdNumber_Buncher.setObjectName(_fromUtf8("cur_Get_lcdNumber"))
+        self.horizontalLayout_3_Buncher.addWidget(self.cur_Get_lcdNumber_Buncher)
+        self.cur_Get_lcdNumber_Buncher.setDigitCount(6)
+        self.cur_Get_lcdNumber_Buncher.setFixedHeight(40)
+        self.cur_Get_lcdNumber_Buncher.setFixedWidth(120)
+        self.setLcdPalette(self.cur_Get_lcdNumber_Buncher)
+
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_3_Buncher, 3, 1, 1, 1)
+        self.horizontalLayout_6_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_6_Buncher.setObjectName(_fromUtf8("horizontalLayout_6_Buncher"))
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6_Buncher.addItem(spacerItem4)
+        # self.Volt_Set_lineEdit = QtGui.QLineEdit(self.frame_HighVoltage_Main)
+        self.Volt_Set_lineEdit_Buncher = QtGui.QSpinBox(self.frame_HighVoltage_Main_Buncher)
+        self.Volt_Set_lineEdit_Buncher.setObjectName(_fromUtf8("Volt_Set_lineEdit_Buncher"))
+        self.setLineEditStile(self.Volt_Set_lineEdit_Buncher)
+        self.horizontalLayout_6_Buncher.addWidget(self.Volt_Set_lineEdit_Buncher)
+
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_6_Buncher, 2, 2, 1, 1)
+        self.horizontalLayout_4_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_4_Buncher.setObjectName(_fromUtf8("horizontalLayout_4_Buncher"))
+        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4_Buncher.addItem(spacerItem5)
+
+        self.Volt_Get_lcdNumber_Buncher = QtGui.QLCDNumber(self.frame_HighVoltage_Main_Buncher)
+        self.Volt_Get_lcdNumber_Buncher.setObjectName(_fromUtf8("Volt_Get_lcdNumber_Buncher"))
+        self.horizontalLayout_4_Buncher.addWidget(self.Volt_Get_lcdNumber_Buncher)
+        self.Volt_Get_lcdNumber_Buncher.setFixedHeight(40)
+        self.Volt_Get_lcdNumber_Buncher.setFixedWidth(120)
+        self.setLcdPalette(self.Volt_Get_lcdNumber_Buncher)
+
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_4_Buncher, 3, 2, 1, 1)
+        self.horizontalLayout_7_Buncher = QtGui.QHBoxLayout()
+        self.horizontalLayout_7_Buncher.setObjectName(_fromUtf8("horizontalLayout_7_Buncher"))
+        spacerItem6 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_7_Buncher.addItem(spacerItem6)
+        self.label_6_Buncher = QtGui.QLabel(self.frame_HighVoltage_Main_Buncher)
+        self.label_6_Buncher.setObjectName(_fromUtf8("label_6_Buncher"))
+        self.horizontalLayout_7_Buncher.addWidget(self.label_6_Buncher)
+        self.gridLayout_Buncher.addLayout(self.horizontalLayout_7_Buncher, 1, 1, 1, 1)
+        self.labelMainBottom_Buncher = QtGui.QLabel(self.frame_HighVoltage_Main_Buncher)
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.labelMainBottom_Buncher.setFont(font)
+        self.labelMainBottom_Buncher.setObjectName(_fromUtf8("labelMainBottom_Buncher"))
+        self.gridLayout_Buncher.addWidget(self.labelMainBottom_Buncher, 0, 0, 1, 3)
+        self.verticalLayout.addWidget(self.frame_HighVoltage_Main_Buncher)
+        self.horizontalLayout.addWidget(self.frame)
+
     def setStatusColor(self,led,label,color):
         palette = QtGui.QPalette()
         if color=="red":
@@ -452,3 +563,46 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_6.setText(_translate("MainWindow", "Ток мА", None))
         self.labelMainBottom.setText(_translate("MainWindow", "Высокое напряжение модулятора  (BHM) RFQ", None))
         self.clearEdit_pushButton.setText(_translate("MainWindow", "Очистить", None))
+
+        #new ??? !!!
+        self.cur_Volt_pushButton_Buncher.setText(_translate("MainWindow", "Установить", None))
+        self.labelMainBottom_Buncher.setText(_translate("MainWindow", "Высокое напряжение Банчера RFQ", None))
+        self.label_7_Buncher.setText(_translate("MainWindow", "Напряжение В", None))
+        self.label_6_Buncher.setText(_translate("MainWindow", "Ток мА", None))
+        self.label_4_Buncher.setText(_translate("MainWindow", "Заданное", None))
+        self.label_5_Buncher.setText(_translate("MainWindow", "Измеренное", None))
+
+        # def addAndInitFrameBuncher_Main(self):
+        #     self.frame_Buncher_Main = QtGui.QFrame(self.frame)
+        #     self.frame_Buncher_Main.setFrameShape(QtGui.QFrame.Panel)
+        #     self.frame_Buncher_Main.setFrameShadow(QtGui.QFrame.Raised)
+        #     self.frame_Buncher_Main.setObjectName(_fromUtf8("frame_Buncher_Main"))
+        #
+        #     self.Volt_Get_lcdNumber_Buncher = QtGui.QLCDNumber(self.frame_Buncher_Main)
+        #     self.Volt_Get_lcdNumber_Buncher.setObjectName(_fromUtf8("Volt_Get_lcdNumber_Buncher"))
+        #
+        #     self.horiz_layout_Buncher = QtGui.QHBoxLayout(self.frame_Buncher_Main)
+        #
+        #     # self.horizontalLayout_4.addWidget(self.Volt_Get_lcdNumber)
+        #     self.Volt_Get_lcdNumber_Buncher.setFixedHeight(40)
+        #     self.Volt_Get_lcdNumber_Buncher.setFixedWidth(120)
+        #     self.setLcdPalette(self.Volt_Get_lcdNumber_Buncher)
+        #     self.horiz_layout_Buncher.addWidget(self.Volt_Get_lcdNumber_Buncher)
+        #
+        #     self.cur_Set_lineEdit_Buncher = QtGui.QSpinBox(self.frame_Buncher_Main)
+        #     self.setLineEditStile(self.cur_Set_lineEdit_Buncher)
+        #     self.cur_Set_lineEdit_Buncher.setObjectName(_fromUtf8("cur_Set_lineEdit_Buncher"))
+        #     self.horiz_layout_Buncher.addWidget(self.cur_Set_lineEdit_Buncher)
+        #
+        #     self.volt_Set_lineEdit_Buncher = QtGui.QSpinBox(self.frame_Buncher_Main)
+        #     self.setLineEditStile(self.volt_Set_lineEdit_Buncher)
+        #     self.volt_Set_lineEdit_Buncher.setObjectName(_fromUtf8("volt_Set_lineEdit_Buncher"))
+        #     self.horiz_layout_Buncher.addWidget(self.volt_Set_lineEdit_Buncher)
+        #
+        #     self.cur_Volt_pushButton_Buncher = QtGui.QPushButton(self.frame_Buncher_Main)
+        #     self.cur_Volt_pushButton_Buncher.setFixedWidth(150)
+        #     self.cur_Volt_pushButton_Buncher.setObjectName(_fromUtf8("cur_Volt_pushButton_Buncher"))
+        #     self.horiz_layout_Buncher.addWidget(self.cur_Volt_pushButton_Buncher)
+        #
+        #     self.verticalLayout.addWidget(self.frame_Buncher_Main)
+        #     self.horizontalLayout.addWidget(self.frame)

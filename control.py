@@ -74,6 +74,17 @@ class Main_Control(object):
         self.uic.Volt_Set_lineEdit.setMaximum(60000)
         self.uic.Volt_Set_lineEdit.setSingleStep(100)
 
+        # BUNCHER
+        # Свойства для установки тока и напряжения
+        self.uic.cur_Set_lineEdit_Buncher.setMinimum(0)
+        self.uic.cur_Set_lineEdit_Buncher.setMaximum(60000)
+        self.uic.cur_Set_lineEdit_Buncher.setSingleStep(10)
+        # self.uic.cur_Set_lineEdit.setSuffix('mA')
+
+        self.uic.Volt_Set_lineEdit_Buncher.setMinimum(0)
+        self.uic.Volt_Set_lineEdit_Buncher.setMaximum(60000)
+        self.uic.Volt_Set_lineEdit_Buncher.setSingleStep(100)
+
 
         # блокировка панелей включения и установки
         # self.setEnabledPanels( self.uic,False)
@@ -148,6 +159,9 @@ class Main_Control(object):
         self.uic.clsSign.connect(self.clearEdit)
         self.uic.outtextRadioButton.toggled.connect(self.showOutput)
 
+        # ??? !!!
+        self.uic.cur_Volt_pushButton_Buncher.clicked.connect(self.setCurVoltage_Buncher)
+
     def showOutput(self):
         if (self.uic.outtextRadioButton.isChecked() == True):
             self.uic.frame_2.show()
@@ -221,6 +235,35 @@ class Main_Control(object):
             if MDEBUG:
                 print("TEST2:" + str(val))
             aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+            txt = txt + " напряжение: <b>" + str(val) + "В</b><br>"
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            if st:
+                self.send_to_textBrowser(QtCore.QObject.trUtf8(app, txt))
+                # self.send_to_textBrowser(u"ППлоывралтыслвап")
+        except PyTango.DevFailed as exc:
+            if MDEBUG:
+                print("exc in setCurVoltage")
+
+    def setCurVoltage_Buncher(self):
+        try:
+            txt = "Установлены значения "
+            val = self.uic.cur_Set_lineEdit_Buncher.text()
+            st = True
+            if MDEBUG:
+                print("TEST:" + str(val))
+            inn = ["D58", str(val)]
+            aa = self.dev.command_inout("WriteRegisterOrFlag", inn)
+            txt = txt + " ток: <b>" + str(val) + "мА</b>, "
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            val = self.uic.volt_Set_lineEdit_Buncher.text()
+            inn = ["D106", str(val)]
+            if MDEBUG:
+                print("TEST2:" + str(val))
+            aa = self.dev.command_inout("WriteRegisterOrFlag", inn)
             txt = txt + " напряжение: <b>" + str(val) + "В</b><br>"
             st = st & aa
             if MDEBUG:
@@ -332,6 +375,9 @@ class Main_Control(object):
             # ток заряда емкостей длинной линии модулятора RFQ
             val = self.parsed_json['argout'][0]['D9']/100.
             self.uic.cur_Get_lcdNumber.display(val)
+            #??? !!! заряд банчер
+            val = self.parsed_json['argout'][0]['D116']
+            self.uic.Volt_Get_lcdNumber_Buncher.display(val)
         else:
             self.uic.system_lcdNumber.display(0)
             self.uic.Volt_Get_lcdNumber.display(0)
