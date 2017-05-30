@@ -457,6 +457,8 @@ class Ui_MainWindow(QtCore.QObject):
         self.cur_Get_lcdNumber_Buncher.setDigitCount(6)
         self.cur_Get_lcdNumber_Buncher.setFixedHeight(40)
         self.cur_Get_lcdNumber_Buncher.setFixedWidth(120)
+        #??? !!! TEMPLATE
+        self.cur_Get_lcdNumber_Buncher.setHidden(True)
         self.setLcdPalette(self.cur_Get_lcdNumber_Buncher)
 
         self.gridLayout_Buncher.addLayout(self.horizontalLayout_3_Buncher, 3, 1, 1, 1)
