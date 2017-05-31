@@ -77,8 +77,8 @@ class Main_Control(object):
         # BUNCHER
         # Свойства для установки тока и напряжения
         self.uic.cur_Set_lineEdit_Buncher.setMinimum(0)
-        self.uic.cur_Set_lineEdit_Buncher.setMaximum(60000)
-        self.uic.cur_Set_lineEdit_Buncher.setSingleStep(10)
+        self.uic.cur_Set_lineEdit_Buncher.setMaximum(20)
+        self.uic.cur_Set_lineEdit_Buncher.setSingleStep(1)
         # self.uic.cur_Set_lineEdit.setSuffix('mA')
 
         self.uic.Volt_Set_lineEdit_Buncher.setMinimum(0)
