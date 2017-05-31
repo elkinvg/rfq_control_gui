@@ -259,7 +259,7 @@ class Main_Control(object):
             st = st & aa
             if MDEBUG:
                 print(aa)
-            val = self.uic.volt_Set_lineEdit_Buncher.text()
+            val = self.uic.Volt_Set_lineEdit_Buncher.text()
             inn = ["D106", str(val)]
             if MDEBUG:
                 print("TEST2:" + str(val))
@@ -361,6 +361,7 @@ class Main_Control(object):
         # отключение панелей, если не все флаги состояния защиты активны
         self.uic.frame_System_Main.setEnabled(False)
         self.uic.frame_HighVoltage_Main.setEnabled(False)
+        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
 
     def set_LcdNumbers_Value(self):
         # Напряжение накала лампы выходного каскада ГВЧ ???
@@ -434,6 +435,8 @@ class Main_Control(object):
 
         self.uic.frame_System_Main.setEnabled(self.protect_Status)
         self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
+        # ??? !!! Buncher
+        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
 
         self.uic.ventil_pushButton.setEnabled(self.ventil_block)
         self.uic.heat_pushButton.setEnabled(self.heat_block)
