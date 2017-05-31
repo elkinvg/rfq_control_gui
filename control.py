@@ -356,11 +356,12 @@ class Main_Control(object):
 
                 ddd = str(self.parsed_json['argout'][0]['D58'])
                 # self.uic.cur_Set_lineEdit.setText(ddd)
-                self.uic.cur_Set_lineEdit_Buncher.setValue(int(ddd))
+                self.uic.cur_Set_lineEdit_Buncher.setValue(int(10))
 
                 ddd = str(self.parsed_json['argout'][0]['D106'])
                 # self.uic.cur_Set_lineEdit.setText(ddd)
-                self.uic.cur_Set_lineEdit_Buncher.setValue(int(ddd))
+                # self.uic.Volt_Set_lineEdit_Buncher.setValue(ddd)
+                self.uic.Volt_Set_lineEdit_Buncher.setValue(int(1000))
 
                 self.firstRun = False
                 if (readStatus == 0):
