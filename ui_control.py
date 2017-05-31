@@ -248,10 +248,10 @@ class Ui_MainWindow(QtCore.QObject):
         self.on_off_pushButton_Buncher.setObjectName(_fromUtf8("on_off_pushButton_Buncher"))
         self.gridLayout_2.addWidget(self.on_off_pushButton_Buncher, 1, 2, 1, 1)
         #??? !!! BUNCHER
-        self.on_off_Buncher_Status = TaurusLed(self.frame_System)
-        self.on_off_Buncher_Status.setLedColor("red")
-        self.on_off_Buncher_Status.setObjectName(_fromUtf8("bhm_Rfq_Status"))
-        self.gridLayout_2.addWidget(self.on_off_Buncher_Status, 1, 3, 1, 1)
+        self.on_off_Buncher_Status_Led = TaurusLed(self.frame_System)
+        self.on_off_Buncher_Status_Led.setLedColor("red")
+        self.on_off_Buncher_Status_Led.setObjectName(_fromUtf8("bhm_Rfq_Status_Led"))
+        self.gridLayout_2.addWidget(self.on_off_Buncher_Status_Led, 1, 3, 1, 1)
 
 
 

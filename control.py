@@ -122,7 +122,7 @@ class Main_Control(object):
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
         # self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
-        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13'] #25?
+        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13','Y26'] #25?
         self.blk_ventil = ['X0','X1','M24']
         self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
         self.blk_rfq = ['X0','X1','M24','X10','X11','M25','M45','X3'] #M3->M45
@@ -143,7 +143,7 @@ class Main_Control(object):
         # self.dict['X15'] = self.uic.bhm_Rfq_Status
         self.dict['X13'] = self.uic.bhm_Rfq_Status
         #self.dict['Y26'] = self.uic.bhm_Rfq_Status
-        #self.dict['Y26'] =
+        self.dict['Y26'] = self.uic.on_off_Buncher_Status_Led
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
@@ -170,7 +170,9 @@ class Main_Control(object):
         # if self.rfq_block != 0:
         #     self.message_err(QtCore.QString.fromUtf8("Накал и ВНМ RFQ должны быть выключены"))
         #     return
-        if self.parsed_json['argout'][0][self.dictBut['on_off_bunch']] == 0:
+        bunch_tst = self.dictBut['on_off_bunch']
+        if self.parsed_json['argout'][0][bunch_tst] == 0:
+        #if self.parsed_json['argout'][0]["Y26"] == 0:
             inn = [self.dictBut['on_off_bunch'], "1"]
         else:
             inn = [self.dictBut['on_off_bunch'], "0"]
@@ -318,6 +320,8 @@ class Main_Control(object):
                     mod = "Накал"
                 elif key == 'X13':
                     mod = "ВНМ RFQ"
+                elif key == 'Y26':
+                    mod = "ВНМ RFQ"
 
                 mes = "Статус <b>" + mod + "</b> поменялся на " + str(self.parsed_json['argout'][0][key]) + "<br>"
                 self.send_to_textBrowser(QtCore.QObject.trUtf8(app, mes))
@@ -349,6 +353,15 @@ class Main_Control(object):
                 ddd = str(self.parsed_json['argout'][0]['D68'])
                 #self.uic.cur_Set_lineEdit.setText(ddd)
                 self.uic.cur_Set_lineEdit.setValue(int(ddd))
+
+                ddd = str(self.parsed_json['argout'][0]['D58'])
+                # self.uic.cur_Set_lineEdit.setText(ddd)
+                self.uic.cur_Set_lineEdit_Buncher.setValue(int(ddd))
+
+                ddd = str(self.parsed_json['argout'][0]['D106'])
+                # self.uic.cur_Set_lineEdit.setText(ddd)
+                self.uic.cur_Set_lineEdit_Buncher.setValue(int(ddd))
+
                 self.firstRun = False
                 if (readStatus == 0):
                     mes = u"Нет соединения с контроллером"
@@ -448,10 +461,15 @@ class Main_Control(object):
         # Включение выключение системной панели и панели установки напряжения модулятора
         # self.system_Status = self.system_Status & parsed['argout'][0][self.rfq_statled]
 
-        self.uic.frame_System_Main.setEnabled(self.protect_Status)
-        self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
+        # ??? !!! Почему тут не true
+        self.uic.frame_System_Main.setEnabled(True)
+        self.uic.frame_HighVoltage_Main.setEnabled(True)
+        # self.uic.frame_System_Main.setEnabled(self.protect_Status)
+        # self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
         # ??? !!! Buncher
-        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
+
+        #self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
+        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(True)
 
         self.uic.ventil_pushButton.setEnabled(self.ventil_block)
         self.uic.heat_pushButton.setEnabled(self.heat_block)
