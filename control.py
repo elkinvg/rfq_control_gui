@@ -122,7 +122,7 @@ class Main_Control(object):
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
         # self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
-        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13','Y26'] #25?
+        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13','M7'] #25?
         self.blk_ventil = ['X0','X1','M24']
         self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
         self.blk_rfq = ['X0','X1','M24','X10','X11','M25','M45','X3'] #M3->M45
@@ -143,7 +143,8 @@ class Main_Control(object):
         # self.dict['X15'] = self.uic.bhm_Rfq_Status
         self.dict['X13'] = self.uic.bhm_Rfq_Status
         #self.dict['Y26'] = self.uic.bhm_Rfq_Status
-        self.dict['Y26'] = self.uic.on_off_Buncher_Status_Led
+        #self.dict['Y26'] = self.uic.on_off_Buncher_Status_Led
+        self.dict['M7'] = self.uic.on_off_Buncher_Status_Led
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
@@ -320,7 +321,7 @@ class Main_Control(object):
                     mod = "Накал"
                 elif key == 'X13':
                     mod = "ВНМ RFQ"
-                elif key == 'Y26':
+                elif key == 'M7':
                     mod = "ВНМ RFQ"
 
                 mes = "Статус <b>" + mod + "</b> поменялся на " + str(self.parsed_json['argout'][0][key]) + "<br>"
