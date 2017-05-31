@@ -234,13 +234,27 @@ class Ui_MainWindow(QtCore.QObject):
         self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
         self.bhm_Rfq_pushButton = QtGui.QPushButton(self.frame_System)
         self.bhm_Rfq_pushButton.setObjectName(_fromUtf8("bhm_Rfq_pushButton"))
-        self.gridLayout_2.addWidget(self.bhm_Rfq_pushButton, 1, 2, 1, 1)
+        self.gridLayout_2.addWidget(self.bhm_Rfq_pushButton, 0, 2, 1, 1)
 
         # self.bhm_Rfq_Status = QtGui.QCheckBox(self.frame_System)
         self.bhm_Rfq_Status = TaurusLed(self.frame_System)
         self.bhm_Rfq_Status.setLedColor("red")
         self.bhm_Rfq_Status.setObjectName(_fromUtf8("bhm_Rfq_Status"))
-        self.gridLayout_2.addWidget(self.bhm_Rfq_Status, 1, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.bhm_Rfq_Status, 0, 3, 1, 1)
+
+        # ??? !!! BUNCHER
+        self.on_off_pushButton_Buncher = QtGui.QPushButton(self.frame_System)
+        self.on_off_pushButton_Buncher.setFixedWidth(150)
+        self.on_off_pushButton_Buncher.setObjectName(_fromUtf8("on_off_pushButton_Buncher"))
+        self.gridLayout_2.addWidget(self.on_off_pushButton_Buncher, 1, 2, 1, 1)
+        #??? !!! BUNCHER
+        self.on_off_Buncher_Status = TaurusLed(self.frame_System)
+        self.on_off_Buncher_Status.setLedColor("red")
+        self.on_off_Buncher_Status.setObjectName(_fromUtf8("bhm_Rfq_Status"))
+        self.gridLayout_2.addWidget(self.on_off_Buncher_Status, 1, 3, 1, 1)
+
+
+
 
         self.ventil_pushButton = QtGui.QPushButton(self.frame_System)
         self.ventil_pushButton.setObjectName(_fromUtf8("ventil_pushButton"))
@@ -416,6 +430,11 @@ class Ui_MainWindow(QtCore.QObject):
         self.cur_Volt_pushButton_Buncher.setObjectName(_fromUtf8("cur_Volt_pushButton_Buncher"))
         self.gridLayout_Buncher.addWidget(self.cur_Volt_pushButton_Buncher, 2, 3, 1, 1)
 
+        # self.on_off_pushButton_Buncher = QtGui.QPushButton(self.frame_HighVoltage_Main_Buncher)
+        # self.on_off_pushButton_Buncher.setFixedWidth(150)
+        # self.on_off_pushButton_Buncher.setObjectName(_fromUtf8("on_off_pushButton_Buncher"))
+        # self.gridLayout_Buncher.addWidget(self.on_off_pushButton_Buncher, 3, 3, 1, 1)
+
         self.horizontalLayout_5_Buncher = QtGui.QHBoxLayout()
         self.horizontalLayout_5_Buncher.setObjectName(_fromUtf8("horizontalLayout_5_Buncher"))
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
@@ -573,6 +592,7 @@ class Ui_MainWindow(QtCore.QObject):
         self.label_6_Buncher.setText(_translate("MainWindow", "Ток мА", None))
         self.label_4_Buncher.setText(_translate("MainWindow", "Заданное", None))
         self.label_5_Buncher.setText(_translate("MainWindow", "Измеренное", None))
+        self.on_off_pushButton_Buncher.setText(_translate("MainWindow", "Банчер", None))
 
         # def addAndInitFrameBuncher_Main(self):
         #     self.frame_Buncher_Main = QtGui.QFrame(self.frame)

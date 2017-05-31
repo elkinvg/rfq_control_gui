@@ -142,10 +142,13 @@ class Main_Control(object):
         # self.dict['M5'] = self.uic.bhm_Rfq_Status
         # self.dict['X15'] = self.uic.bhm_Rfq_Status
         self.dict['X13'] = self.uic.bhm_Rfq_Status
+        #self.dict['Y26'] = self.uic.bhm_Rfq_Status
+        #self.dict['Y26'] =
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
         self.dictBut['Rfq_pb'] = 'M5'
+        self.dictBut['on_off_bunch'] = 'M7'
 
 
     def setSignalHandler(self):
@@ -161,6 +164,18 @@ class Main_Control(object):
 
         # ??? !!!
         self.uic.cur_Volt_pushButton_Buncher.clicked.connect(self.setCurVoltage_Buncher)
+        self.uic.on_off_pushButton_Buncher.clicked.connect(self.on_off_Buncher)
+
+    def on_off_Buncher(self):
+        # if self.rfq_block != 0:
+        #     self.message_err(QtCore.QString.fromUtf8("Накал и ВНМ RFQ должны быть выключены"))
+        #     return
+        if self.parsed_json['argout'][0][self.dictBut['on_off_bunch']] == 0:
+            inn = [self.dictBut['on_off_bunch'], "1"]
+        else:
+            inn = [self.dictBut['on_off_bunch'], "0"]
+        self.dev.command_inout("WriteRegisterOrFlag", inn)
+
 
     def showOutput(self):
         if (self.uic.outtextRadioButton.isChecked() == True):
