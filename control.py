@@ -74,6 +74,17 @@ class Main_Control(object):
         self.uic.Volt_Set_lineEdit.setMaximum(60000)
         self.uic.Volt_Set_lineEdit.setSingleStep(100)
 
+        # BUNCHER
+        # Свойства для установки тока и напряжения
+        self.uic.cur_Set_lineEdit_Buncher.setMinimum(0)
+        self.uic.cur_Set_lineEdit_Buncher.setMaximum(20)
+        self.uic.cur_Set_lineEdit_Buncher.setSingleStep(1)
+        # self.uic.cur_Set_lineEdit.setSuffix('mA')
+
+        self.uic.Volt_Set_lineEdit_Buncher.setMinimum(0)
+        self.uic.Volt_Set_lineEdit_Buncher.setMaximum(60000)
+        self.uic.Volt_Set_lineEdit_Buncher.setSingleStep(100)
+
 
         # блокировка панелей включения и установки
         # self.setEnabledPanels( self.uic,False)
@@ -111,7 +122,7 @@ class Main_Control(object):
     def initDictOfLedsAndButton(self):
         #self.leds = ['X0','X1','M24','X12','X13','M1','M3','M5'] #25?
         # self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X15'] #25?
-        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13'] #25?
+        self.leds = ['X0','X1','M24','X10','X11','X3','M25','M45','X13','M7'] #25?
         self.blk_ventil = ['X0','X1','M24']
         self.blk_heat = ['X0','X1','M24','X10','X11','M45'] #M3->M45
         self.blk_rfq = ['X0','X1','M24','X10','X11','M25','M45','X3'] #M3->M45
@@ -131,10 +142,14 @@ class Main_Control(object):
         # self.dict['M5'] = self.uic.bhm_Rfq_Status
         # self.dict['X15'] = self.uic.bhm_Rfq_Status
         self.dict['X13'] = self.uic.bhm_Rfq_Status
+        #self.dict['Y26'] = self.uic.bhm_Rfq_Status
+        #self.dict['Y26'] = self.uic.on_off_Buncher_Status_Led
+        self.dict['M7'] = self.uic.on_off_Buncher_Status_Led
 
         self.dictBut['heat_pb'] = 'M1'
         self.dictBut['ventil_pb'] = 'M3'
         self.dictBut['Rfq_pb'] = 'M5'
+        self.dictBut['on_off_bunch'] = 'M7'
 
 
     def setSignalHandler(self):
@@ -147,6 +162,23 @@ class Main_Control(object):
         self.uic.clearEdit_pushButton.clicked.connect(self.clearEdit)
         self.uic.clsSign.connect(self.clearEdit)
         self.uic.outtextRadioButton.toggled.connect(self.showOutput)
+
+        # ??? !!!
+        self.uic.cur_Volt_pushButton_Buncher.clicked.connect(self.setCurVoltage_Buncher)
+        self.uic.on_off_pushButton_Buncher.clicked.connect(self.on_off_Buncher)
+
+    def on_off_Buncher(self):
+        # if self.rfq_block != 0:
+        #     self.message_err(QtCore.QString.fromUtf8("Накал и ВНМ RFQ должны быть выключены"))
+        #     return
+        bunch_tst = self.dictBut['on_off_bunch']
+        if self.parsed_json['argout'][0][bunch_tst] == 0:
+        #if self.parsed_json['argout'][0]["Y26"] == 0:
+            inn = [self.dictBut['on_off_bunch'], "1"]
+        else:
+            inn = [self.dictBut['on_off_bunch'], "0"]
+        self.dev.command_inout("WriteRegisterOrFlag", inn)
+
 
     def showOutput(self):
         if (self.uic.outtextRadioButton.isChecked() == True):
@@ -209,8 +241,8 @@ class Main_Control(object):
             val = self.uic.cur_Set_lineEdit.text()
             st = True
             if MDEBUG:
-                print("TEST:" + str(val))
-            inn = ["D68",str(val)]
+                print("TEST:" + str(int(int(val)/2.5)))
+            inn = ["D68",str(int(int(val)/2.5))]
             aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
             txt = txt + " ток: <b>" + str(val) + "мА</b>, "
             st = st & aa
@@ -221,6 +253,35 @@ class Main_Control(object):
             if MDEBUG:
                 print("TEST2:" + str(val))
             aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
+            txt = txt + " напряжение: <b>" + str(val) + "В</b><br>"
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            if st:
+                self.send_to_textBrowser(QtCore.QObject.trUtf8(app, txt))
+                # self.send_to_textBrowser(u"ППлоывралтыслвап")
+        except PyTango.DevFailed as exc:
+            if MDEBUG:
+                print("exc in setCurVoltage")
+
+    def setCurVoltage_Buncher(self):
+        try:
+            txt = "Установлены значения "
+            val = self.uic.cur_Set_lineEdit_Buncher.text()
+            st = True
+            if MDEBUG:
+                print("TEST:" + str(val))
+            inn = ["D58", str(val)]
+            aa = self.dev.command_inout("WriteRegisterOrFlag", inn)
+            txt = txt + " ток: <b>" + str(val) + "мА</b>, "
+            st = st & aa
+            if MDEBUG:
+                print(aa)
+            val = self.uic.Volt_Set_lineEdit_Buncher.text()
+            inn = ["D106", str(val)]
+            if MDEBUG:
+                print("TEST2:" + str(val))
+            aa = self.dev.command_inout("WriteRegisterOrFlag", inn)
             txt = txt + " напряжение: <b>" + str(val) + "В</b><br>"
             st = st & aa
             if MDEBUG:
@@ -260,6 +321,8 @@ class Main_Control(object):
                     mod = "Накал"
                 elif key == 'X13':
                     mod = "ВНМ RFQ"
+                elif key == 'M7':
+                    mod = "ВНМ RFQ"
 
                 mes = "Статус <b>" + mod + "</b> поменялся на " + str(self.parsed_json['argout'][0][key]) + "<br>"
                 self.send_to_textBrowser(QtCore.QObject.trUtf8(app, mes))
@@ -288,9 +351,22 @@ class Main_Control(object):
                 ddd = str(self.parsed_json['argout'][0]['D66'])
                 # self.uic.Volt_Set_lineEdit.setText(ddd)
                 self.uic.Volt_Set_lineEdit.setValue(int(ddd))
-                ddd = str(self.parsed_json['argout'][0]['D68'])
+                ddd = str(int(int(self.parsed_json['argout'][0]['D68'])*2.5))
                 #self.uic.cur_Set_lineEdit.setText(ddd)
+                self.uic.cur_Set_lineEdit.setMaximum(int("70"))
                 self.uic.cur_Set_lineEdit.setValue(int(ddd))
+
+                ddd = str(self.parsed_json['argout'][0]['D58'])
+                #self.uic.cur_Set_lineEdit_Buncher.setText(ddd)
+                # self.uic.cur_Set_lineEdit_Buncher.setValue(int(10))
+                self.uic.cur_Set_lineEdit_Buncher.setValue(int(ddd))
+
+                ddd = str(self.parsed_json['argout'][0]['D106'])
+                # self.uic.cur_Set_lineEdit.setText(ddd)
+                # self.uic.Volt_Set_lineEdit_Buncher.setValue(ddd)
+                self.uic.Volt_Set_lineEdit_Buncher.setValue(int(ddd))
+                #self.uic.Volt_Set_lineEdit_Buncher.setValue(int(1000))
+
                 self.firstRun = False
                 if (readStatus == 0):
                     mes = u"Нет соединения с контроллером"
@@ -318,6 +394,7 @@ class Main_Control(object):
         # отключение панелей, если не все флаги состояния защиты активны
         self.uic.frame_System_Main.setEnabled(False)
         self.uic.frame_HighVoltage_Main.setEnabled(False)
+        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
 
     def set_LcdNumbers_Value(self):
         # Напряжение накала лампы выходного каскада ГВЧ ???
@@ -330,8 +407,11 @@ class Main_Control(object):
             val = self.parsed_json['argout'][0]['D98']
             self.uic.Volt_Get_lcdNumber.display(val)
             # ток заряда емкостей длинной линии модулятора RFQ
-            val = self.parsed_json['argout'][0]['D9']/100.
+            val = self.parsed_json['argout'][0]['D61']/100.
             self.uic.cur_Get_lcdNumber.display(val)
+            #??? !!! заряд банчер
+            val = self.parsed_json['argout'][0]['D116']
+            self.uic.Volt_Get_lcdNumber_Buncher.display(val)
         else:
             self.uic.system_lcdNumber.display(0)
             self.uic.Volt_Get_lcdNumber.display(0)
@@ -386,8 +466,15 @@ class Main_Control(object):
         # Включение выключение системной панели и панели установки напряжения модулятора
         # self.system_Status = self.system_Status & parsed['argout'][0][self.rfq_statled]
 
-        self.uic.frame_System_Main.setEnabled(self.protect_Status)
-        self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
+        # ??? !!! Почему тут не true
+        self.uic.frame_System_Main.setEnabled(True)
+        self.uic.frame_HighVoltage_Main.setEnabled(True)
+        # self.uic.frame_System_Main.setEnabled(self.protect_Status)
+        # self.uic.frame_HighVoltage_Main.setEnabled(self.system_Status)
+        # ??? !!! Buncher
+
+        #self.uic.frame_HighVoltage_Main_Buncher.setEnabled(self.system_Status)
+        self.uic.frame_HighVoltage_Main_Buncher.setEnabled(True)
 
         self.uic.ventil_pushButton.setEnabled(self.ventil_block)
         self.uic.heat_pushButton.setEnabled(self.heat_block)
