@@ -241,8 +241,8 @@ class Main_Control(object):
             val = self.uic.cur_Set_lineEdit.text()
             st = True
             if MDEBUG:
-                print("TEST:" + str(val))
-            inn = ["D68",str(val)]
+                print("TEST:" + str(int(int(val)/2.5)))
+            inn = ["D68",str(int(int(val)/2.5))]
             aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
             txt = txt + " ток: <b>" + str(val) + "мА</b>, "
             st = st & aa
@@ -351,8 +351,9 @@ class Main_Control(object):
                 ddd = str(self.parsed_json['argout'][0]['D66'])
                 # self.uic.Volt_Set_lineEdit.setText(ddd)
                 self.uic.Volt_Set_lineEdit.setValue(int(ddd))
-                ddd = str(self.parsed_json['argout'][0]['D68'])
+                ddd = str(int(int(self.parsed_json['argout'][0]['D68'])*2.5))
                 #self.uic.cur_Set_lineEdit.setText(ddd)
+                self.uic.cur_Set_lineEdit.setMaximum(int("70"))
                 self.uic.cur_Set_lineEdit.setValue(int(ddd))
 
                 ddd = str(self.parsed_json['argout'][0]['D58'])
@@ -406,7 +407,7 @@ class Main_Control(object):
             val = self.parsed_json['argout'][0]['D98']
             self.uic.Volt_Get_lcdNumber.display(val)
             # ток заряда емкостей длинной линии модулятора RFQ
-            val = self.parsed_json['argout'][0]['D9']/100.
+            val = self.parsed_json['argout'][0]['D61']/100.
             self.uic.cur_Get_lcdNumber.display(val)
             #??? !!! заряд банчер
             val = self.parsed_json['argout'][0]['D116']
