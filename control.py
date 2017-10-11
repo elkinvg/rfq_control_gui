@@ -241,8 +241,8 @@ class Main_Control(object):
             val = self.uic.cur_Set_lineEdit.text()
             st = True
             if MDEBUG:
-                print("TEST:" + str(int(int(val)/2.5)))
-            inn = ["D68",str(int(int(val)/2.5))]
+                print("TEST:" + str(val))
+            inn = ["D68",str(val)]
             aa = self.dev.command_inout("WriteRegisterOrFlag",inn)
             txt = txt + " ток: <b>" + str(val) + "мА</b>, "
             st = st & aa
@@ -407,11 +407,14 @@ class Main_Control(object):
             val = self.parsed_json['argout'][0]['D98']
             self.uic.Volt_Get_lcdNumber.display(val)
             # ток заряда емкостей длинной линии модулятора RFQ
-            val = self.parsed_json['argout'][0]['D61']/100.
+            val = self.parsed_json['argout'][0]['D61']/40.
             self.uic.cur_Get_lcdNumber.display(val)
             #??? !!! заряд банчер
             val = self.parsed_json['argout'][0]['D116']
             self.uic.Volt_Get_lcdNumber_Buncher.display(val)
+            # Ток Банчера
+            val = self.parsed_json['argout'][0]['D63']/400.
+            self.uic.cur_Get_lcdNumber_Buncher.display(val)
         else:
             self.uic.system_lcdNumber.display(0)
             self.uic.Volt_Get_lcdNumber.display(0)
